@@ -1,6 +1,5 @@
-import { Controller, Get, Inject, Param, Res } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { FileSubmissionService } from '../providers/FileSubmissionService';
 import { join } from 'path';
 import { TransactionService } from '../providers/transaction.service';
 import * as process from 'node:process';
@@ -13,13 +12,16 @@ export class FileDownloadController {
     /**
      * Returns the file associated to the record identifier.
      *
-     * @param recordId The identifier of the record.
+     * @param fileSignId The identifier of the file sign transaction.
      * @param res The response used to send a file.
      */
-    @Get(':recordId')
-    async download(@Param('recordId') recordId: string, @Res() res: Response) {
+    @Get(':fileSignId')
+    async download(
+        @Param('fileSignId') fileSignId: string,
+        @Res() res: Response,
+    ) {
         const transaction: Transaction =
-            await this.transactionService.getTransaction(recordId);
+            await this.transactionService.getTransaction(fileSignId);
         const path = join(process.cwd(), transaction.path);
         const originalFilename = transaction.originalName;
         res.set(

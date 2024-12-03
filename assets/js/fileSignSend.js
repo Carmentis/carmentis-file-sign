@@ -4,6 +4,7 @@ async function onLoad() {
 
     // load the identifier
     const id = document.getElementById('id').value;
+    const fileSignId = document.getElementById('fileSignId').value;
     const applicationId = document.getElementById('appId').value;
     const recordId = document.getElementById('recordId').value;
 
@@ -20,11 +21,11 @@ async function onLoad() {
 
     if (answer.success) {
         // on success, we redirect to the success page
-        window.location = `/send/success/${recordId}`;
+        window.location = `/send/success/${fileSignId}`;
     } else {
         // on error, we redirect to the error page
         console.log('Error...', answer);
-        window.location = '/send/failure';
+        window.location = '/send/error';
     }
 }
 

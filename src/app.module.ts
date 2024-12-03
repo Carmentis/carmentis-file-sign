@@ -1,16 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
-import { FileSubmissionService } from './providers/FileSubmissionService';
 import { CarmentisInitService } from './carmentis-init.service';
 import { join } from 'path';
 import { EmailService } from './providers/email.service';
-import { FileSendController } from './fileSend/fileSend.controller';
-import { ReviewController } from './review/review.controller';
-import { FileDownloadController } from './fileDownload/fileDownload.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionService } from './providers/transaction.service';
 import { TransactionEntry } from './entities/transactionEntry';
+import { FileSendController } from './controllers/fileSend.controller';
+import { FileReviewController } from './controllers/fileReview.controller';
+import { FileDownloadController } from './controllers/fileDownload.controller';
 
 @Module({
     imports: [
@@ -19,18 +18,18 @@ import { TransactionEntry } from './entities/transactionEntry';
             type: 'sqlite',
             database: 'database.sqlite',
             entities: [TransactionEntry],
+            synchronize: true, // Automatically create database schema
         }),
         TypeOrmModule.forFeature([TransactionEntry]),
     ],
     controllers: [
         AppController,
         FileSendController,
-        ReviewController,
+        FileReviewController,
         FileDownloadController,
     ],
     providers: [
         TransactionService,
-        FileSubmissionService,
         CarmentisInitService,
         EmailService,
         {

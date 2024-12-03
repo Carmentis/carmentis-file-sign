@@ -22,6 +22,7 @@ export interface Fields {
 }
 
 export interface Transaction {
+    id: string;
     application: ApplicationDefinition;
     field: Fields;
     filename: string;

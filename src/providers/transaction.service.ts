@@ -13,8 +13,8 @@ export class TransactionService {
 
     // Add a new transaction
     async addTransaction(transaction: Transaction): Promise<void> {
-        await this.transactionRepository.save({
-            transactionId: transaction.recordId,
+        await this.transactionRepository.insert({
+            transactionId: transaction.id,
             serializedTransaction: JSON.stringify(transaction),
         });
     }
@@ -36,7 +36,7 @@ export class TransactionService {
     // Update a transaction
     async updateTransaction(transaction: Transaction): Promise<void> {
         await this.transactionRepository.save({
-            transactionId: transaction.recordId,
+            transactionId: transaction.id,
             serializedTransaction: JSON.stringify(transaction),
         });
     }

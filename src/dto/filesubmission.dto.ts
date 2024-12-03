@@ -1,9 +1,4 @@
-import {
-    IsEmail,
-    IsInt,
-    IsNotEmpty,
-    IsString,
-} from 'class-validator';
+import { IsEmail, IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class FileSubmissionDto {

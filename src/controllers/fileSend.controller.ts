@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { PrepareUserApprovalData } from '../providers/FileSubmissionService';
+import { PrepareUserApprovalData } from '../providers/fileSubmission.service';
 import { EmailService } from '../providers/email.service';
 import {
     Body,
@@ -76,13 +76,13 @@ export class FileSendController {
         @Res() res: Response,
     ): Promise<void> {
         // generate a random identifier for the current transaction.
-        const id =
-            'FS' + ((Math.random() * 1e5) | 0).toString().padStart(6, '0');
+        const fileSignId =
+            'FS' + ((Math.random() * 1e15) | 0).toString().padStart(6, '0');
 
         // create the fields
         const fileContent = fs.readFileSync(file.path);
         const field: Fields = {
-            transactionId: id,
+            transactionId: fileSignId,
             senderDocument: {
                 file: {
                     name: file.originalname,
@@ -142,6 +142,7 @@ export class FileSendController {
 
             const recordId = answer.data.recordId;
             const transaction: Transaction = {
+                id: fileSignId,
                 application: {
                     id: appId,
                     version: appVersion,
@@ -155,26 +156,29 @@ export class FileSendController {
                 senderEmail: fileSubmissionDto.senderEmail,
                 recipientEmail: fileSubmissionDto.recipientEmail,
             };
+            console.log("add transaction: ", transaction)
             await this.transactionService.addTransaction(transaction);
 
-            res.redirect(`/send/confirmFile/${recordId}`);
+            res.redirect(`/send/confirmFile/${fileSignId}`);
         } catch (e) {
             console.error(e);
             throw e;
         }
     }
 
-    @Get('/confirmFile/:recordId')
+    @Get('/confirmFile/:fileSignId')
     @Render('confirmFile')
-    async confirmFile(@Param('recordId') recordId: string) {
+    async confirmFile(@Param('fileSignId') fileSignId: string) {
         const transaction: Transaction =
-            await this.transactionService.getTransaction(recordId);
+            await this.transactionService.getTransaction(fileSignId);
 
         const applicationId = transaction.application.id;
+        const recordId = transaction.recordId;
         const id = `${applicationId}-${recordId}`;
 
         return {
             id: id,
+            fileSignId: fileSignId,
             recordId: recordId,
             applicationId: transaction.application.id,
             applicationVersion: transaction.application.version,
@@ -182,24 +186,24 @@ export class FileSendController {
     }
 
     @Render('fileSent')
-    @Get('/success/:recordId')
+    @Get('/success/:fileSignId')
     async fileSent(
-        @Param('recordId') recordId: string,
+        @Param('fileSignId') fileSignId: string,
         @Req() request: Request,
         @Res() res: Response,
     ) {
         const transaction: Transaction =
-            await this.transactionService.getTransaction(recordId);
+            await this.transactionService.getTransaction(fileSignId);
 
         if (!transaction.mailSent) {
             // Send email if not already sent
-            const fileAccessUrl = `${request.protocol}://${request.hostname}:${request.socket.localPort}/review/authenticate/${recordId}`;
+            const fileAccessUrl = `${request.protocol}://${request.hostname}:${request.socket.localPort}/review/authenticate/${fileSignId}`;
             await this.emailService.sendEmail({
                 fileAccessLink: fileAccessUrl,
                 receiverEmail: transaction.recipientEmail,
                 senderEmail: transaction.senderEmail,
             });
-            //transaction.mailSent = true;
+            transaction.mailSent = true;
         }
 
         const answer = await sdk.query('getRecordInformation', {

@@ -4,7 +4,6 @@ import {
     Get,
     HttpException,
     HttpStatus,
-    Inject,
     Param,
     Post,
     Render,
@@ -12,36 +11,34 @@ import {
     Res,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { Transaction } from '../providers/FileSubmissionService';
+import { Transaction } from '../providers/fileSubmission.service';
 import { TransactionService } from '../providers/transaction.service';
 import { Response } from 'express';
 import { ReviewSubmissionDto } from '../dto/reviewSubmission.dto';
 import * as sdk from '../carmentis-application-sdk';
 
 @Controller('review')
-export class ReviewController {
-    constructor(
-        private readonly transactionService: TransactionService,
-        @Inject('DOWNLOADS_DIR') private readonly downloadDir: string,
-    ) {}
+export class FileReviewController {
+    constructor(private readonly transactionService: TransactionService) {}
 
     /**
      * This function is called when a user attempts to review a file and should
      * be authenticated before to perform the review.
-     * @param recordId
+     * @param fileSignId
      */
     @Render('reviewAuthentication')
-    @Get('authenticate/:recordId')
-    async review(@Param('recordId') recordId: string) {
+    @Get('authenticate/:fileSignId')
+    async review(@Param('fileSignId') fileSignId: string) {
         try {
             const transaction =
-                await this.transactionService.getTransaction(recordId);
+                await this.transactionService.getTransaction(fileSignId);
 
             return {
                 appId: transaction.application.id,
                 appVersion: transaction.application.version,
-                recordId: recordId,
-                id: recordId,
+                fileSignId: fileSignId,
+                recordId: transaction.recordId,
+                id: transaction.recordId,
                 sender: transaction.field.senderDocument.senderEmail,
             };
         } catch (e) {
@@ -49,26 +46,26 @@ export class ReviewController {
         }
     }
 
-    @Get('review/:recordId/:proof')
+    @Get('review/:fileSignId/:proof')
     @Render('review')
     async fileAccess(
-        @Param('recordId') recordId: string,
+        @Param('fileSignId') fileSignId: string,
         @Param('proof') serializedProof: string,
         @Req() request: Request,
         @Res() res: Response,
     ) {
         // check that the proof exists, otherwise redirect to authentication
         if (!serializedProof) {
-            return res.redirect(`/review/authenticate/${recordId}`);
+            return res.redirect(`/review/authenticate/${fileSignId}`);
         }
 
         // get the transaction
         const transaction: Transaction =
-            await this.transactionService.getTransaction(recordId);
+            await this.transactionService.getTransaction(fileSignId);
         const proof = JSON.parse(
             Buffer.from(serializedProof, 'base64').toString('utf-8'),
         );
-        console.log('checking email');
+
         // check the email of the user trying to access the file.
         const email = proof.email.trim().toLowerCase();
         const recipientEmail = transaction.field.senderDocument.recipientEmail
@@ -79,29 +76,29 @@ export class ReviewController {
         }
 
         // render the page with the link to access the file
-        const downloadUrl = `${request.protocol}://${request.hostname}:${request.socket.localPort}/download/${recordId}`;
-        const id = `${transaction.application.id}-${recordId}`;
+        const downloadUrl = `${request.protocol}://${request.hostname}:${request.socket.localPort}/download/${fileSignId}`;
+        const id = `${transaction.application.id}-${fileSignId}`;
         return {
             appId: transaction.application.id,
             appVersion: transaction.application.version,
             id: id,
-            recordId: recordId,
+            fileSignId: fileSignId,
+            recordId: transaction.recordId,
             sender: transaction.field.senderDocument.senderEmail,
             url: downloadUrl,
         };
     }
 
-    @Post('review/:recordId/')
+    @Post('review/:fileSignId/')
     @Render('confirmReview')
     async reviewApproval(
-        @Param('recordId') recordId: string,
+        @Param('fileSignId') fileSignId: string,
         @Body() reviewSubmissionDto: ReviewSubmissionDto,
-        @Res() response: Response,
     ) {
         console.log(reviewSubmissionDto);
         // TODO check authentication of the user
         const transaction: Transaction =
-            await this.transactionService.getTransaction(recordId);
+            await this.transactionService.getTransaction(fileSignId);
 
         const field = {
             recipientAnswer: {

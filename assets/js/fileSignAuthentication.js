@@ -5,7 +5,7 @@ async function onLoad() {
     // load the identifier
     const id = document.getElementById('id').value;
     const applicationId = document.getElementById('appId').value;
-    const recordId = document.getElementById('recordId').value;
+    const fileSignId = document.getElementById('fileSignId').value;
 
     let answer = await Carmentis.wallet.request({
         qrElementId: 'qr', // QRCode identifier
@@ -24,7 +24,7 @@ async function onLoad() {
         // the provided proof is a signature of the proof.
         const proof = JSON.stringify(answer.proof);
         const serializedProof = btoa(proof);
-        const url = `/review/review/${recordId}/${serializedProof}`;
+        const url = `/review/review/${fileSignId}/${serializedProof}`;
         window.location = url;
     } else {
         // on error, we redirect to the error page
