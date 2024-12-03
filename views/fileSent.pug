@@ -1,0 +1,20 @@
+doctype html
+html(lang="en")
+    include templates/head.pug
+
+    body
+        include templates/header.pug
+        include templates/smallHero.pug
+
+        main#main
+            // ======= Contact Section =======
+            section#start.contact
+                .container
+                    .row
+                        div(data-aos="fade-right")
+                            .section-title
+                                h2 File Sent
+                                p Congratulations! Your file is ready. An email has been sent to the recipient.
+
+        // ======= Footer =======
+        include templates/footer.pug

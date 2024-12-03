@@ -1,0 +1,46 @@
+doctype html
+html(lang="en")
+    include templates/head.pug
+
+    body
+        include templates/header.pug
+        include templates/smallHero.pug
+
+        main#main
+            // ======= Contact Section =======
+            section#start.contact
+                .container
+                    .row
+                        div(data-aos="fade-right")
+                            .section-title
+                                h2 Download
+                                p You've been successfully authenticated as the recipient of this file.
+                                p(style="text-align:center;margin:20px")
+                                    a(href=url, target="_blank")
+                                        span.formButton
+                                            i.bi.bi-download
+                                            |  Download your file
+                                h2 Your answer
+                            .col-lg-12(data-aos="fade-up", data-aos-delay="100")
+                                form(action="/review/review/" + recordId, method="post", role="form", class="php-email-form mt-4")
+                                    .row
+                                        .col-md-12.form-group
+                                            div(style="margin-bottom:8px")
+                                                input.form-check-input(type="radio", name="answer", id="accept", value="accepted", checked="")
+                                                label.form-check-label(for="accept") I agree with the content of this file
+                                            div
+                                                input.form-check-input(type="radio", name="answer", id="decline", value="declined")
+                                                label.form-check-label(for="decline") I reject this file
+                                    .form-group.mt-3
+                                        textarea.form-control(name="comment", rows="5", placeholder="Comment")
+                                    .text-center
+                                        button(type="submit") Confirm
+
+                                    input(type="hidden", id="appId", name="appId", value=appId)
+                                    input(type="hidden", id="appVersion", name="appVersion", value=appVersion)
+
+                                    input(type="hidden" id="id" name="id" value=id)
+                                    input(type="hidden" id="recordId" name="recordId" value=recordId)
+
+        // ======= Footer =======
+        include templates/footer.pug

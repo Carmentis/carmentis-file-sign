@@ -1,0 +1,35 @@
+.row
+  .col-lg-6.mt-4(style="height:335px")
+    .info
+      i.circle-icon.bi.bi-phone
+      h4 Use the Carmentis application
+      #qr(style="margin:20px auto 0 auto")
+      p.pt-4(style="text-align:center")
+        a(href="#")
+          i.bi.bi-google-play
+          |  Google Play
+        |  /
+        a(href="#")
+          i.bi.bi-apple
+          |  App Store
+  .col-lg-6
+    .info.w-100.mt-4(style="height:335px")
+      i.circle-icon.bi.bi-window
+      h4 Use the Carmentis extension
+      p.pt-4(style="text-align:center")
+        a(href="#")
+          i.bi.bi-browser-firefox
+          |  Download for Firefox
+        br
+        br
+        a#carmentis-link(style="display: none" onclick="(window.carmentisWallet !== undefined ? window.carmentisWallet.openPopup(document.querySelector('[data-code]')?.getAttribute('data-code')) : {}); return false" href="#")
+          | Use the extension
+        script.
+          document.addEventListener('DOMContentLoaded', function () {
+            setTimeout(function () {
+                if (window.carmentisWallet !== undefined) {
+                  document.getElementById('carmentis-link').style.display = 'inline';
+                }
+
+            }, 500);
+          });

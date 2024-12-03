@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+    // Include head section
+    include templates/head
+
+    body
+        // Include header section
+        include templates/header
+        include templates/smallHero
+
+        main#main
+            // Contact Section
+            section#start.contact
+                .container
+                    .row
+                        div(data-aos="fade-right")
+                            .section-title
+                                h2 Approval
+                                p Please use your Carmentis wallet to review and sign this transaction.
+
+                                input(type="hidden" id="appId" name="appId" value=applicationId)
+                                input(type="hidden" id="appVersion" name="appVersion" value=applicationVersion)
+
+                                input(type="hidden" id="id" name="id" value=id)
+                                input(type="hidden" id="recordId" name="recordId" value=recordId)
+
+                                // Include wallet connection
+                                include templates/walletConnection
+        // Include footer section
+        include templates/footer
+        script(src="/assets/js/fileSignSend.js")

@@ -1,0 +1,31 @@
+doctype html
+html(lang="en")
+    include templates/head.pug
+
+    body
+        include templates/header.pug
+        include templates/smallHero.pug
+
+        main#main
+            // ======= Contact Section =======
+            section#start.contact
+                .container
+                    .row
+                        div(data-aos="fade-right")
+                            .section-title
+                                h2 You have a file to review
+                                p You have a file to review from
+                                    b= sender
+                                p Please authenticate with your Carmentis wallet to access it.
+
+                                input(type="hidden" id="appId" name="appId" value=appId)
+                                input(type="hidden" id="appVersion" name="appVersion" value=appVersion)
+
+                                input(type="hidden" id="id" name="id" value=id)
+                                input(type="hidden" id="recordId" name="recordId" value=recordId)
+
+                                include templates/walletConnection.pug
+
+        // ======= Footer =======
+        include templates/footer.pug
+        script(src="/assets/js/fileSignAuthentication.js")

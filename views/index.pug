@@ -1,0 +1,39 @@
+doctype html
+html(lang="en")
+  include templates/head.pug
+  body
+    include templates/header
+    include templates/bigHero
+    main(id="main")
+
+      // ======= Contact Section =======
+      section(id="start", class="contact")
+        .container
+          .row
+            div(data-aos="fade-right")
+              .section-title
+                h2 Send a file
+                p Please complete the form below.
+
+            .col-lg-12(data-aos="fade-up", data-aos-delay="100")
+              form(action="/send/submitFile", enctype="multipart/form-data", method="post", role="form", class="php-email-form mt-4")
+                .row
+                  .col-md-12.form-group
+                    input(type="file", name="fileToSign", class="form-control upload-btn", id="name", required)
+
+                .row
+                  .col-md-6.form-group.mt-3
+                    input(type="email", class="form-control", name="senderEmail", placeholder="Your Email", required)
+                  .col-md-6.form-group.mt-3
+                    input(type="email", class="form-control", name="recipientEmail", placeholder="Recipient Email", required)
+
+                .form-group.mt-3
+                  textarea(class="form-control", name="comment", rows="5", placeholder="Comment")
+
+                .text-center
+                  button(type="submit") Confirm
+
+                input(type="hidden", id="appId", name="appId", value=applicationId)
+                input(type="hidden", id="appVersion", name="appVersion", value=applicationVersion)
+
+    include templates/footer
