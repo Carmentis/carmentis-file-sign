@@ -5,7 +5,7 @@ import { FileSubmissionService } from './providers/FileSubmissionService';
 import { CarmentisInitService } from './carmentis-init.service';
 import { join } from 'path';
 import { EmailService } from './providers/email.service';
-import { FileSendController } from './file-send/fileSend.controller';
+import { FileSendController } from './fileSend/fileSend.controller';
 import { ReviewController } from './review/review.controller';
 import { FileDownloadController } from './fileDownload/fileDownload.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
