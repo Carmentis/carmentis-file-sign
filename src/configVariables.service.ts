@@ -1,22 +1,11 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class ConfigVariablesService implements OnModuleInit {
+export class ConfigVariablesService {
     private readonly logger = new Logger(ConfigVariablesService.name);
 
-    constructor(private readonly configService: ConfigService) {}
-
-    private _defaultApplicationId: string;
-    private _defaultApplicationVersion: number;
-    private _operatorHost: string;
-    private _operatorPort: number;
-    private _smtpHost: string;
-    private _smtpPort: number;
-    private _smtpUser: string;
-    private _smtpPassword: string;
-
-    async onModuleInit() {
+    constructor(private readonly configService: ConfigService) {
         this._defaultApplicationId = this.configService.getOrThrow<string>(
             'DEFAULT_APPLICATION_ID',
         );
@@ -31,7 +20,19 @@ export class ConfigVariablesService implements OnModuleInit {
         this._smtpPort = this.configService.getOrThrow<number>('SMTP_PORT');
         this._smtpUser = this.configService.getOrThrow<string>('SMTP_USER');
         this._smtpPassword = this.configService.getOrThrow<string>('SMTP_PASS');
+        this.logger.log("SMTP host:", this._smtpHost)
     }
+
+    private _defaultApplicationId: string;
+    private _defaultApplicationVersion: number;
+    private _operatorHost: string;
+    private _operatorPort: number;
+    private _smtpHost: string;
+    private _smtpPort: number;
+    private _smtpUser: string;
+    private _smtpPassword: string;
+
+
 
     get operatorHost(): string {
         return this._operatorHost;

@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
 import { join } from 'path';
 import * as pug from 'pug';
@@ -14,11 +14,15 @@ export interface EmailObject {
 @Injectable()
 export class EmailService {
     private transporter;
+    private readonly logger = new Logger(EmailService.name);
 
     constructor(
         private envVariables: ConfigVariablesService,
         @Inject('VIEWS_DIR') private readonly viewsDir: string,
     ) {
+        this.logger.log(`SMTP Host: ${this.envVariables.smtpHost}`);
+        this.logger.log(`SMTP Port: ${this.envVariables.smtpPort}`);
+        this.logger.log(`SMTP User: ${this.envVariables.smtpUser}`);
         this.transporter = nodemailer.createTransport({
             host: this.envVariables.smtpHost,
             port: this.envVariables.smtpPort,
