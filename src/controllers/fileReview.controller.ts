@@ -85,7 +85,7 @@ export class FileReviewController {
         }
 
         // render the page with the link to access the file
-        const downloadUrl = `${request.protocol}://${request.hostname}:${request.socket.localPort}/download/${fileSignId}`;
+        const downloadUrl = `${request.protocol}://${request.hostname}/download/${fileSignId}`;
         const id = `${transaction.application.id}-${fileSignId}`;
         return {
             appId: transaction.application.id,

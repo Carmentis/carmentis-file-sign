@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsIn, IsOptional, IsString } from 'class-validator';
 
 export class ReviewSubmissionDto {
     @IsIn(['accepted', 'declined'], {
@@ -8,6 +8,5 @@ export class ReviewSubmissionDto {
 
     @IsOptional()
     @IsString()
-    @IsNotEmpty({ message: 'Comment cannot be empty if provided.' })
     comment?: string;
 }
