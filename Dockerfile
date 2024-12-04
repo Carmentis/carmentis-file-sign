@@ -1,5 +1,5 @@
 # Use a Node.js LTS base image
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install --production
+RUN npm install
 RUN npm i -g @nestjs/cli
 
 # Copy the rest of the application code to the working directory
