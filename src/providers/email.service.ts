@@ -1,9 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { ConfigService } from '@nestjs/config';
 import { join } from 'path';
 import * as pug from 'pug';
 import * as process from 'node:process';
+import { ConfigVariablesService } from '../configVariables.service';
 
 export interface EmailObject {
     senderEmail: string;
@@ -16,16 +16,16 @@ export class EmailService {
     private transporter;
 
     constructor(
-        private configService: ConfigService,
+        private envVariables: ConfigVariablesService,
         @Inject('VIEWS_DIR') private readonly viewsDir: string,
     ) {
         this.transporter = nodemailer.createTransport({
-            host: this.configService.get('SMTP_HOST'),
-            port: this.configService.get('SMTP_PORT'),
+            host: this.envVariables.smtpHost,
+            port: this.envVariables.smtpPort,
             secure: true,
             auth: {
-                user: this.configService.get('SMTP_USER'),
-                pass: this.configService.get('SMTP_PASS'),
+                user: this.envVariables.smtpUser,
+                pass: this.envVariables.smtpPassword,
             },
         });
     }
