@@ -9,6 +9,7 @@ COPY package*.json ./
 
 # Install dependencies
 RUN npm install --production
+RUN npm i -g @nestjs/cli
 
 # Copy the rest of the application code to the working directory
 COPY . .
