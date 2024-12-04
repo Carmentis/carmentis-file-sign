@@ -1,5 +1,4 @@
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { CarmentisInitService } from './carmentis-init.service';
 import { join } from 'path';
@@ -11,6 +10,7 @@ import { FileSendController } from './controllers/fileSend.controller';
 import { FileReviewController } from './controllers/fileReview.controller';
 import { FileDownloadController } from './controllers/fileDownload.controller';
 import { ConfigVariablesService } from './configVariables.service';
+import { RewriteRootToSendMiddleware } from './middlewares/redirect.middleware';
 
 @Module({
     imports: [
@@ -24,7 +24,6 @@ import { ConfigVariablesService } from './configVariables.service';
         TypeOrmModule.forFeature([TransactionEntry]),
     ],
     controllers: [
-        AppController,
         FileSendController,
         FileReviewController,
         FileDownloadController,
@@ -41,4 +40,10 @@ import { ConfigVariablesService } from './configVariables.service';
     ],
     exports: ['VIEWS_DIR'],
 })
-export class AppModule {}
+export class AppModule {
+    configure(consumer: MiddlewareConsumer) {
+        consumer
+            .apply(RewriteRootToSendMiddleware)
+            .forRoutes({ path: '/', method: RequestMethod.ALL });
+    }
+}
