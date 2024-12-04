@@ -4,6 +4,7 @@ import {
     Get,
     HttpException,
     HttpStatus,
+    Logger,
     Param,
     Post,
     Render,
@@ -19,6 +20,8 @@ import * as sdk from '../carmentis-application-sdk';
 
 @Controller('review')
 export class FileReviewController {
+    private readonly logger = new Logger(FileReviewController.name);
+
     constructor(private readonly transactionService: TransactionService) {}
 
     /**
@@ -56,6 +59,9 @@ export class FileReviewController {
     ) {
         // check that the proof exists, otherwise redirect to authentication
         if (!serializedProof) {
+            this.logger.log(
+                `Access to review denied for id ${fileSignId}: No proof provided`,
+            );
             return res.redirect(`/review/authenticate/${fileSignId}`);
         }
 
@@ -72,6 +78,9 @@ export class FileReviewController {
             .trim()
             .toLowerCase();
         if (email != recipientEmail) {
+            this.logger.log(
+                `Access to review denied for id ${fileSignId}: No correspondence with expected email`,
+            );
             throw new HttpException('Cannot access file', HttpStatus.FORBIDDEN);
         }
 
@@ -95,7 +104,8 @@ export class FileReviewController {
         @Param('fileSignId') fileSignId: string,
         @Body() reviewSubmissionDto: ReviewSubmissionDto,
     ) {
-        console.log(reviewSubmissionDto);
+        this.logger.log(`Receiving review for id ${fileSignId}`);
+
         // TODO check authentication of the user
         const transaction: Transaction =
             await this.transactionService.getTransaction(fileSignId);
@@ -128,6 +138,10 @@ export class FileReviewController {
         const reviewRecordId = answer.data.recordId;
 
         if (!answer.success) {
+            this.logger.error(
+                `Invalid operator response received for id ${fileSignId}:`,
+                answer,
+            );
             throw new HttpException(
                 'Invalid request send to operator',
                 HttpStatus.FORBIDDEN,

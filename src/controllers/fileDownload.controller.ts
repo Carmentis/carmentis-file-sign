@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Logger, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { join } from 'path';
 import { TransactionService } from '../providers/transaction.service';
@@ -7,6 +7,8 @@ import { Transaction } from '../entities/transaction';
 
 @Controller('download')
 export class FileDownloadController {
+    private readonly logger = new Logger(FileDownloadController.name);
+
     constructor(private readonly transactionService: TransactionService) {}
 
     /**
@@ -20,8 +22,14 @@ export class FileDownloadController {
         @Param('fileSignId') fileSignId: string,
         @Res() res: Response,
     ) {
+        // load the transaction
         const transaction: Transaction =
             await this.transactionService.getTransaction(fileSignId);
+        this.logger.log(
+            `Access to file ${transaction.path} for id ${fileSignId}`,
+        );
+
+        // respond with the file
         const path = join(process.cwd(), transaction.path);
         const originalFilename = transaction.originalName;
         res.set(

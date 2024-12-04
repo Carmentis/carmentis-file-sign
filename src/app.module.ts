@@ -10,6 +10,7 @@ import { TransactionEntry } from './entities/transactionEntry';
 import { FileSendController } from './controllers/fileSend.controller';
 import { FileReviewController } from './controllers/fileReview.controller';
 import { FileDownloadController } from './controllers/fileDownload.controller';
+import { ConfigVariablesService } from './configVariables.service';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { FileDownloadController } from './controllers/fileDownload.controller';
         FileDownloadController,
     ],
     providers: [
+        ConfigVariablesService,
         TransactionService,
         CarmentisInitService,
         EmailService,

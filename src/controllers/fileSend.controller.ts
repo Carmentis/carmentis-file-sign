@@ -7,8 +7,10 @@ import {
     Get,
     HttpException,
     HttpStatus,
+    Logger,
     Param,
     Post,
+    Query,
     Render,
     Req,
     Res,
@@ -24,21 +26,36 @@ import * as fs from 'fs';
 import * as sdk from '../carmentis-application-sdk';
 import { TransactionService } from '../providers/transaction.service';
 import { Fields, Transaction } from '../entities/transaction';
+import { ConfigVariablesService } from '../configVariables.service';
 
 @Controller('send')
 export class FileSendController {
+    private readonly logger = new Logger(FileSendController.name);
+
     constructor(
         private readonly configService: ConfigService,
+        private readonly envVariables: ConfigVariablesService,
         private readonly transactionService: TransactionService,
         private readonly emailService: EmailService,
     ) {}
 
     @Get()
     @Render('index')
-    index() {
-        const appId = this.configService.get<string>('APPLICATION_ID');
-        const appVersion = this.configService.get<string>(
-            'APPLICATION_VERSION',
+    index(
+        @Query('id') applicationId: string | undefined = undefined,
+        @Query('version') applicationVersion: number | undefined = undefined,
+    ) {
+        // check if the request contains an application id and version, otherwise
+        // uses the default id and version.
+        let appId = this.envVariables.defaultApplicationId;
+        let appVersion = this.envVariables.defaultApplicationVersion;
+        if (applicationId && applicationVersion) {
+            appId = applicationId;
+            appVersion = applicationVersion;
+        }
+
+        this.logger.log(
+            `Initiating session with app-id ${appId} and version ${appVersion}`,
         );
         return {
             applicationId: appId,
@@ -78,6 +95,8 @@ export class FileSendController {
         // generate a random identifier for the current transaction.
         const fileSignId =
             'FS' + ((Math.random() * 1e15) | 0).toString().padStart(6, '0');
+
+        this.logger.log(`Initiating file submission with id ${fileSignId}`);
 
         // create the fields
         const fileContent = fs.readFileSync(file.path);
@@ -156,12 +175,12 @@ export class FileSendController {
                 senderEmail: fileSubmissionDto.senderEmail,
                 recipientEmail: fileSubmissionDto.recipientEmail,
             };
-            console.log("add transaction: ", transaction)
+
             await this.transactionService.addTransaction(transaction);
 
             res.redirect(`/send/confirmFile/${fileSignId}`);
         } catch (e) {
-            console.error(e);
+            this.logger.error(e);
             throw e;
         }
     }
@@ -169,6 +188,8 @@ export class FileSendController {
     @Get('/confirmFile/:fileSignId')
     @Render('confirmFile')
     async confirmFile(@Param('fileSignId') fileSignId: string) {
+        this.logger.log(`Confirming file with id ${fileSignId}`);
+
         const transaction: Transaction =
             await this.transactionService.getTransaction(fileSignId);
 
