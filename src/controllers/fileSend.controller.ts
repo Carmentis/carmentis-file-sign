@@ -78,7 +78,7 @@ export class FileSendController {
     @UseInterceptors(
         FileInterceptor('fileToSign', {
             storage: diskStorage({
-                destination: './uploads',
+                destination: './storage/uploads',
                 filename: (req, file, cb) => {
                     const ext = extname(file.originalname); // Extract the file's extension
                     const filename = `${Date.now()}${ext}`; // Generate a unique filename using the current timestamp

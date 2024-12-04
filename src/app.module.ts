@@ -17,7 +17,7 @@ import { ConfigVariablesService } from './configVariables.service';
         ConfigModule.forRoot(),
         TypeOrmModule.forRoot({
             type: 'sqlite',
-            database: 'database.sqlite',
+            database: 'storage/database.sqlite',
             entities: [TransactionEntry],
             synchronize: true, // Automatically create database schema
         }),
@@ -37,10 +37,6 @@ import { ConfigVariablesService } from './configVariables.service';
         {
             provide: 'VIEWS_DIR',
             useValue: join(__dirname, 'views'),
-        },
-        {
-            provide: 'DOWNLOADS_DIR',
-            useValue: join(__dirname, 'downloads'),
         },
     ],
     exports: ['VIEWS_DIR'],

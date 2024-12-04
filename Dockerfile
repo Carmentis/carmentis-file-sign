@@ -17,5 +17,8 @@ COPY . .
 # Expose port 3000
 EXPOSE 3000
 
+# Create a volume for the storage
+VOLUME ["/app/storage"]
+
 # Command to run the application
 CMD ["npm", "run", "start"]

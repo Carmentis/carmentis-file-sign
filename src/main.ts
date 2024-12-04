@@ -10,9 +10,6 @@ async function bootstrap() {
     app.useStaticAssets('assets', {
         prefix: '/assets/',
     });
-    app.useStaticAssets('downloads', {
-        prefix: '/downloads/',
-    });
     app.setBaseViewsDir('views');
     app.useGlobalPipes(
         new ValidationPipe({
