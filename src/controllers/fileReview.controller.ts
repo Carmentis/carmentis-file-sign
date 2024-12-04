@@ -17,12 +17,16 @@ import { TransactionService } from '../providers/transaction.service';
 import { Response } from 'express';
 import { ReviewSubmissionDto } from '../dto/reviewSubmission.dto';
 import * as sdk from '../carmentis-application-sdk';
+import { ConfigVariablesService } from '../configVariables.service';
 
 @Controller('review')
 export class FileReviewController {
     private readonly logger = new Logger(FileReviewController.name);
 
-    constructor(private readonly transactionService: TransactionService) {}
+    constructor(
+        private readonly envVariables: ConfigVariablesService,
+        private readonly transactionService: TransactionService
+    ) {}
 
     /**
      * This function is called when a user attempts to review a file and should
@@ -85,7 +89,7 @@ export class FileReviewController {
         }
 
         // render the page with the link to access the file
-        const downloadUrl = `${request.protocol}://${request.hostname}/download/${fileSignId}`;
+        const downloadUrl = `${this.envVariables.hostDomainUrl}/download/${fileSignId}`;
         const id = `${transaction.application.id}-${fileSignId}`;
         return {
             appId: transaction.application.id,

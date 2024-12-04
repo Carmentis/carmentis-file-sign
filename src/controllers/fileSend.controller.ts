@@ -218,7 +218,7 @@ export class FileSendController {
 
         if (!transaction.mailSent) {
             // Send email if not already sent
-            const fileAccessUrl = `${request.protocol}://${request.hostname}/review/authenticate/${fileSignId}`;
+            const fileAccessUrl = `${this.envVariables.hostDomainUrl}/review/authenticate/${fileSignId}`;
             await this.emailService.sendEmail({
                 fileAccessLink: fileAccessUrl,
                 receiverEmail: transaction.recipientEmail,
