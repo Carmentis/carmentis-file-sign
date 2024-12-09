@@ -210,15 +210,18 @@ export class FileSendController {
     @Get('/success/:fileSignId')
     async fileSent(
         @Param('fileSignId') fileSignId: string,
-        @Req() request: Request,
         @Res() res: Response,
     ) {
         const transaction: Transaction =
             await this.transactionService.getTransaction(fileSignId);
 
-        if (!transaction.mailSent) {
+        const fileAccessUrl = `${this.envVariables.hostDomainUrl}/review/authenticate/${fileSignId}`;
+        if (!transaction.mailSent && this.emailService.isConfigured()) {
+            this.logger.log(
+                `Sending an email to ${transaction.recipientEmail}`,
+            );
+
             // Send email if not already sent
-            const fileAccessUrl = `${this.envVariables.hostDomainUrl}/review/authenticate/${fileSignId}`;
             await this.emailService.sendEmail({
                 fileAccessLink: fileAccessUrl,
                 receiverEmail: transaction.recipientEmail,
@@ -238,5 +241,9 @@ export class FileSendController {
 
         transaction.flowId = answer.data.flowId;
         await this.transactionService.updateTransaction(transaction);
+
+        return {
+            reviewLink: fileAccessUrl,
+        };
     }
 }

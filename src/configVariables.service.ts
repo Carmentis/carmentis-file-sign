@@ -16,10 +16,10 @@ export class ConfigVariablesService {
             this.configService.getOrThrow<string>('OPERATOR_HOST');
         this._operatorPort =
             this.configService.getOrThrow<number>('OPERATOR_PORT');
-        this._smtpHost = this.configService.getOrThrow<string>('SMTP_HOST');
-        this._smtpPort = this.configService.getOrThrow<number>('SMTP_PORT');
-        this._smtpUser = this.configService.getOrThrow<string>('SMTP_USER');
-        this._smtpPassword = this.configService.getOrThrow<string>('SMTP_PASS');
+        this._smtpHost = this.configService.get<string>('SMTP_HOST');
+        this._smtpPort = this.configService.get<number>('SMTP_PORT');
+        this._smtpUser = this.configService.get<string>('SMTP_USER');
+        this._smtpPassword = this.configService.get<string>('SMTP_PASS');
         this._hostDomainUrl =
             this.configService.getOrThrow<string>('HOST_DOMAIN_URL');
     }
@@ -28,10 +28,10 @@ export class ConfigVariablesService {
     private _defaultApplicationVersion: number;
     private _operatorHost: string;
     private _operatorPort: number;
-    private _smtpHost: string;
-    private _smtpPort: number;
-    private _smtpUser: string;
-    private _smtpPassword: string;
+    private _smtpHost: string | null;
+    private _smtpPort: number | null;
+    private _smtpUser: string | null;
+    private _smtpPassword: string | null;
     private _hostDomainUrl: string;
 
     get hostDomainUrl(): string {

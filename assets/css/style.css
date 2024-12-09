@@ -1467,3 +1467,9 @@ section {
   color: #fff;
   border: none;
 }
+
+
+.reviewLink {
+  padding: 1em;
+  color: #009970;
+}
